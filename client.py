@@ -35,14 +35,17 @@ def getDataPoint(quote):
     stock = quote['stock']
     bid_price = float(quote['top_bid']['price'])
     ask_price = float(quote['top_ask']['price'])
-    price = bid_price
+    price = (bid_price + ask_price) / 2 # Making "price" the average of bid and ask price
     return stock, bid_price, ask_price, price
 
 
 def getRatio(price_a, price_b):
     """ Get ratio of price_a and price_b """
     """ ------------- Update this function ------------- """
-    return 1
+    if price_b == 0:    # Checking to make sure the second price is not zero as this would not work for the ratio
+        return
+    stockRatio = price_a / price_b  # Calculating stock ratio as "stockRatio"
+    return stockRatio   # Returning ratio to main
 
 
 # Main
@@ -52,8 +55,10 @@ if __name__ == "__main__":
         quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
 
         """ ----------- Update to get the ratio --------------- """
+        prices = {} # Creating an empty dictionary to stor the stock prices in later
         for quote in quotes:
             stock, bid_price, ask_price, price = getDataPoint(quote)
+            prices[stock] = price   # storing the stocks price in the "prices" dicitonary
             print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
 
-        print("Ratio %s" % getRatio(price, price))
+        print("Ratio %s" % getRatio(prices["ABC"], prices["DEF"]))  # Printing the correct ratio to the screen
